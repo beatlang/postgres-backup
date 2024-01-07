@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 DUMP_FILE_NAME="backupOn$(date +%Y-%m-%d-%H-%M).dump"
 echo "Creating dump: $DUMP_FILE_NAME"
@@ -23,7 +23,7 @@ response=$(az storage blob upload \
 
 echo "Server Antwort: $response"
 
-if [ "$response" == "Upload Successful" ]; then
+if [ "$response" = "Upload Successful" ]; then
     echo "Backup war erfolgreich."
 else
     echo "Backup ist fehlgeschlagen."
