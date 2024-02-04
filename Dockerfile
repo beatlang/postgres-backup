@@ -1,13 +1,7 @@
-FROM postgres:16-alpine
+FROM mcr.microsoft.com/azure-cli:latest
 
 RUN apk update
-
-# Install azure cli
-RUN apk add py3-pip
-RUN apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
-RUN apk add --update py3-pip
-
-RUN py3-pip install azure-cli
+RUN apk add postgresql-client
 
 COPY backup.sh .
 

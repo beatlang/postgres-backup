@@ -1,11 +1,21 @@
 #!/bin/sh
+WEEK_DAYS=7
+MONTH_DAYS=28
+DAY_OF_WEEK=$(date +%u)
+DAY_OF_MONTH=$(date +%d)
 
-DUMP_FILE_NAME="backupOn$(date +%Y-%m-%d-%H-%M).dump"
+if [ "$DAY_OF_MONTH" -eq "$MONTH_DAYS" ]; then
+  DUMP_FILE_NAME="monthly-backup-$(date +%Y-%m-%d-%H-%M).dump"
+elif [ "$DAY_OF_WEEK" -eq "$WEEK_DAYS" ]; then
+  DUMP_FILE_NAME="weekly-backup-$(date +%Y-%m-%d-%H-%M).dump"
+else
+  DUMP_FILE_NAME="daily-backup-$(date +%Y-%m-%d-%H-%M).dump"
+fi
+
 echo "Creating dump: $DUMP_FILE_NAME"
 
-cd pg_backup || exit
-
-pg_dump -C -w --format=c --blobs > "$DUMP_FILE_NAME"
+mkdir -p "$HOME"/pg_backup && cd $_ || exit
+pg_dumpall -c >"$DUMP_FILE_NAME"
 
 if [ $? -ne 0 ]; then
   rm "$DUMP_FILE_NAME"
@@ -13,21 +23,18 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-response=$(az storage blob upload \
-    --account-name "$AZ_STORAGE_ACCOUNT" \
-    --container-name "$AZ_CONTAINER" \
-    --name "$AZ_BLOB" \
-    --file "$DUMP_FILE_NAME" \
-    --sas-token "$AZ_SAS_TOKEN" \
-    --auth-mode key)
+az storage blob upload \
+  --account-name "$AZ_STORAGE_ACCOUNT" \
+  --container-name "$AZ_CONTAINER" \
+  --account-key "$AZ_ACCOUNT_KEY" \
+  --name "$DUMP_FILE_NAME" \
+  --file "$DUMP_FILE_NAME" \
+  --auth-mode key
 
-echo "Server Antwort: $response"
-
-if [ "$response" = "Upload Successful" ]; then
-    echo "Backup war erfolgreich."
-else
-    echo "Backup ist fehlgeschlagen."
+if [ $? -ne 0 ]; then
+  echo "Backup ist fehlgeschlagen."
+  exit 1
 fi
 
-rm "$DUMP_FILE_NAME"
+echo "Backup war erfolgreich."
 exit 0
