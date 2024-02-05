@@ -9,9 +9,10 @@ on:
       - next
 
 jobs:
-  container:
+  build-image:
     permissions: write-all
     runs-on: ubuntu-latest
+    name: Build Image
     steps:
       - name: "☁️ checkout repository"
         uses: actions/checkout@v4
@@ -55,9 +56,9 @@ jobs:
     environment:
       name: production
       url: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semantic-release.outputs.release-tag }}
-    name: Semantic release
+    name: Semantic Release
     needs:
-      - container
+      - build-image
     runs-on: ubuntu-latest
     steps:
       - name: "☁️ checkout repository"
@@ -78,7 +79,7 @@ jobs:
 
       - name: "🚀 release"
         id: semantic-release
-        uses: open-sauced/semantic-release-conventional-config@v3
+        uses: open-sauced/release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
