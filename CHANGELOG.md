@@ -5,6 +5,13 @@
 
 > All notable changes to this project will be documented in this file
 
+## [1.0.1](https://github.com/beatlang/postgres-backup/compare/v1.0.0...v1.0.1) (2024-02-06)
+
+
+### 🐛 Bug Fixes
+
+* useless file ([21d8b22](https://github.com/beatlang/postgres-backup/commit/21d8b22f13c8628df55507b30bcae451379cf9bf))
+
 ## 1.0.0 (2024-02-06)
 
 
