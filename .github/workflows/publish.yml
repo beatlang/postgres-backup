@@ -28,7 +28,7 @@ jobs:
 
       - name: "🔧 docker meta"
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v5
         with:
           images: ${{ github.repository }}
           tags: latest
@@ -47,7 +47,7 @@ jobs:
           cache-to: type=gha, scope=${{ github.workflow }}
 
       - name: "📂 docker artifacts"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: docker
           path: /tmp/docker.tar
@@ -62,12 +62,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "☁️ checkout repository"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: "📂 download docker artifacts"
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: docker
           path: /tmp
@@ -79,7 +79,7 @@ jobs:
 
       - name: "🚀 release"
         id: semantic-release
-        uses: open-sauced/release@v1
+        uses: open-sauced/release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_NPM_PUBLISH: true
